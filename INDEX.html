@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>태양광 발전소 사업성 진단</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+        }
+        input {
+            padding: 5px;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        .data-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0053a6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #0078d7;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>태양광 발전소 사업성 진단</h1>
+
+    <!-- 한국전력거래소 데이터 -->
+    <div class="data-box" id="kpxData">
+        <h3>한국전력거래소 데이터</h3>
+        <p><strong>오늘의 SMP:</strong> <span id="todaySmp">-</span> 원/kWh</p>
+        <p><strong>오늘의 REC:</strong> <span id="todayRec">-</span> 원</p>
+        <p><strong>년별 평균 SMP:</strong> <span id="yearlySmpAvg">-</span> 원/kWh</p>
+        <p><strong>년별 평균 REC:</strong> <span id="yearlyRecAvg">-</span> 원</p>
+    </div>
+
+    <form id="solarForm">
+        <label>설비용량 (kW):</label><input type="text" id="install_capacity" required><br>
+        <label>REC 가중치:</label><input type="text" id="rec_weight" required><br>
+        <label>발전시간 (시간):</label><input type="text" id="generation_time" required><br>
+        <label>성능저하율 (%):</label><input type="text" id="performance_degradation" required><br>
+        <label>SMP:</label><input type="text" id="smp_price" required><br>
+        <label>REC:</label><input type="text" id="rec_price" required><br>
+        <label>유지비용:</label><input type="text" id="maintenance_cost" required><br>
+        <label>임대료:</label><input type="text" id="rent_cost" required><br>
+        <label>수익공유 비율 (%):</label><input type="text" id="profit_sharing_rate" required><br>
+        <label>자기자본:</label><input type="text" id="equity" required><br>
+        <label>타인자본:</label><input type="text" id="loan" required><br>
+        <label>거치기간 (년):</label><input type="text" id="grace_period" required><br>
+        <label>상환기간 (년):</label><input type="text" id="repayment_period" required><br>
+        <label>이자율 (%):</label><input type="text" id="interest_rate" required><br>
+        <label>물가상승률 (%):</label><input type="text" id="inflation_rate" required><br>
+        <button type="button" onclick="calculate()">계산하기</button>
+    </form>
+
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>연차별</th>
+                <th>연간 발전량</th>
+                <th>연간 생산금액</th>
+                <th>유지비용</th>
+                <th>임대료</th>
+                <th>원금 상환</th>
+                <th>대출 이자</th>
+                <th>대출 잔액</th>
+                <th>수익공유</th>
+                <th>순이익</th>
+                <th>누적 수익</th>
+                <th>사업성 판단</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchKpxData() {
+            try {
+                // Flask 서버에서 제공하는 API 호출
+                const response = await fetch('/api/kpx-data');
+                const data = await response.json();
+
+                // 가져온 데이터를 HTML에 표시
+                document.getElementById("todaySmp").innerText = data.todaySmp || "-";
+                document.getElementById("todayRec").innerText = data.todayRec || "-";
+                document.getElementById("yearlySmpAvg").innerText = data.yearlySmpAvg || "-";
+                document.getElementById("yearlyRecAvg").innerText = data.yearlyRecAvg || "-";
+            } catch (error) {
+                console.error("한국전력거래소 데이터 로드 오류:", error);
+            }
+        }
+
+        function calculate() {
+            // 기존 계산 로직을 유지합니다.
+            alert("계산 로직 실행");
+        }
+
+        // 페이지 로드 시 데이터 가져오기
+        window.onload = fetchKpxData;
+    </script>
+</body>
+</html>
