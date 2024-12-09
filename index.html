@@ -80,6 +80,7 @@
                 <th>연간 생산금액</th>
                 <th>유지비용</th>
                 <th>임대료</th>
+                <th>원금 상환</th>
                 <th>대출 이자</th>
                 <th>대출 잔액</th>
                 <th>순이익</th>
@@ -145,6 +146,7 @@
                     <td>${Math.round(annual_revenue).toLocaleString()}</td>
                     <td>${Math.round(adjusted_maintenance_cost).toLocaleString()}</td>
                     <td>${Math.round(adjusted_rent_cost).toLocaleString()}</td>
+                    <td>${Math.round(repayment).toLocaleString()}</td>
                     <td>${Math.round(interest).toLocaleString()}</td>
                     <td>${Math.round(loan_balance).toLocaleString()}</td>
                     <td>${Math.round(net_income).toLocaleString()}</td>
