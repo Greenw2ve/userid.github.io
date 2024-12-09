@@ -117,6 +117,9 @@
             const annual_repayment = repayment_period > 0 ? loan / repayment_period : 0;
             let cumulative_income = 0;
 
+            // 고정 임대료 설정 (1~20년)
+            const fixed_rent = 16000000;
+
             // 결과 테이블 초기화
             const tableBody = document.querySelector("#resultTable tbody");
             tableBody.innerHTML = "";
@@ -125,7 +128,15 @@
             for (let year = 1; year <= 25; year++) {
                 annual_production *= (1 - performance_degradation);
                 const adjusted_maintenance_cost = maintenance_cost * Math.pow(1 + inflation_rate, year);
-                const rent_cost = year <= 20 ? 16000000 : 0; // 임대료: 20년 동안 고정, 이후 0
+                let rent_cost = 0;
+
+                if (year <= 20) {
+                    rent_cost = fixed_rent; // 1~20년 고정값
+                } else if (year > 20) {
+                    // 21~25년 평균값 계산
+                    rent_cost = fixed_rent / 5; // 평균값
+                }
+
                 const annual_revenue = annual_production * (smp_price + rec_price * rec_weight);
                 const interest = loan_balance * interest_rate;
                 const repayment = year > grace_period ? annual_repayment : 0;
