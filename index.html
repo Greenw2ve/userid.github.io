@@ -93,6 +93,8 @@
         <tbody></tbody>
     </table>
 
+    <p id="summary"></p>
+
     <script>
         function parseFloatWithComma(value) {
             return parseFloat(value.replace(/,/g, "")) || 0;
@@ -120,6 +122,9 @@
             const annual_repayment = repayment_period > 0 ? loan / repayment_period : 0;
             let cumulative_income = 0;
 
+            let repayment_year = null;
+            let equity_recovery_year = null;
+
             const tableBody = document.querySelector("#resultTable tbody");
             tableBody.innerHTML = "";
 
@@ -128,12 +133,15 @@
                 const adjusted_maintenance_cost = maintenance_cost * Math.pow(1 + inflation_rate, year);
                 const annual_revenue = annual_production * (smp_price + rec_price * rec_weight);
                 const interest = loan_balance * interest_rate;
-                const repayment = year > grace_period ? annual_repayment : 0;
+                const repayment = (year > grace_period && year <= grace_period + repayment_period) ? annual_repayment : 0;
                 loan_balance = Math.max(0, loan_balance - repayment);
                 const total_cost = adjusted_maintenance_cost + rent_cost + interest + repayment;
                 const profit_sharing = annual_revenue * profit_sharing_rate;
                 const net_income = annual_revenue - total_cost - profit_sharing;
                 cumulative_income += net_income;
+
+                if (cumulative_income >= loan && repayment_year === null) repayment_year = year;
+                if (cumulative_income >= equity && equity_recovery_year === null) equity_recovery_year = year;
 
                 const feasibility = net_income > 0 ? "적합" : "부적합";
 
@@ -154,6 +162,16 @@
                 `;
                 tableBody.appendChild(tr);
             }
+
+            const total_investment = equity + loan;
+            const return_on_investment = (cumulative_income / total_investment) * 100;
+
+            const summary = document.getElementById("summary");
+            summary.innerHTML = `
+                <strong>원금 상환 시점:</strong> ${repayment_year ? `${repayment_year}년차` : "상환 불가"}<br>
+                <strong>자기자본 회수 시점:</strong> ${equity_recovery_year ? `${equity_recovery_year}년차` : "회수 불가"}<br>
+                <strong>자본 대비 수익률:</strong> ${return_on_investment.toFixed(2)}%
+            `;
         }
     </script>
 </body>
